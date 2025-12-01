@@ -29,10 +29,6 @@ function AdjustROIThickness(ROI, ax)
 
     Step = 1;
 
-    if isprop(ROI, 'LineWidth')
-        ROI.LineWidth = 2;
-    end
-
     Window = ancestor(ax, 'figure');
     Window.WindowScrollWheelFcn = @(~, event) AdjustLineWidth(event, ROI);
 
