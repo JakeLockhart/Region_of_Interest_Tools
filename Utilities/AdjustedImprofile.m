@@ -1,4 +1,4 @@
-function ROIProfile = AdjustedImprofile(Image, ROIManager_Properties_Line_ROIGeometry)
+function ROIProfile = AdjustedImprofile(Image, ROIGeometry)
     % <Documentation>
         % AdjustedImprofile()
         %   Samples the pixel intensity values along a user-defined line with adjustable thickness.
@@ -28,8 +28,8 @@ function ROIProfile = AdjustedImprofile(Image, ROIManager_Properties_Line_ROIGeo
         %   
     % <End Documentation>
 
-    OffsetX = ROIManager_Properties_Line_ROIGeometry.OffsetX;
-    OffsetY = ROIManager_Properties_Line_ROIGeometry.OffsetY;
+    OffsetX = ROIGeometry.OffsetX;
+    OffsetY = ROIGeometry.OffsetY;
 
     Values = interp2(double(Image), OffsetX, OffsetY, "linear", 0);
     ROIProfile = mean(Values, 2, 'omitnan');
