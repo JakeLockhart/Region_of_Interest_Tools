@@ -1,4 +1,4 @@
-function AdjustROIThickness(ROI, ax)
+function AdjustROIThickness(ROI, ax, parentClass)
     % <Documentation>
         % AdjustROIThickness()
         %   Allows for interactive adjustment of ROI outline thickness
@@ -37,6 +37,8 @@ function AdjustROIThickness(ROI, ax)
             AdjustedWidth = ROI.LineWidth + Step * -sign(event.VerticalScrollCount);
 
             ROI.LineWidth = max(0.5, min(AdjustedWidth, 100));
+
+            parentClass.DefaultLineWidth = ROI.LineWidth;
         end
     end
 end
