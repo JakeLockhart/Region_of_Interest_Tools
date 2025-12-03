@@ -68,6 +68,8 @@ classdef WindowConstructor < handle
             obj.mainLayout = uigridlayout(obj.window, [2,1]);
             obj.mainLayout.RowHeight = {'1x', 50};
             obj.mainLayout.ColumnWidth = {'1x'};
+
+            obj.window.WindowKeyPressFcn = @(src, event) obj.KeyPressHandler(event);
         end
 
         %% Image Display Panel
@@ -125,6 +127,14 @@ classdef WindowConstructor < handle
             obj.doneButton.Layout.Row = 1;
             obj.doneButton.Layout.Column = 3;    
         end
+
+        function KeyPressHandler(obj, event)
+            switch event.Key
+                case 'space'
+                    obj.DrawButton();
+            end
+        end
+
     end
 
 end
