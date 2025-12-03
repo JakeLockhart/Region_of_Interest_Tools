@@ -5,6 +5,10 @@ classdef ROIManager < handle
         Properties
     end
 
+    properties (Hidden)
+        DefaultLineWidth = 2;
+    end
+
     properties (Constant)
         ROI_Shape_List = {'Rectangle', ...
                           'Circle', ...
@@ -41,8 +45,5 @@ classdef ROIManager < handle
                 close(Window.window);
             end
         end
-        
     end
-
-
 end
