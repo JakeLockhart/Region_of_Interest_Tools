@@ -1,4 +1,4 @@
-function ROI = DrawROI(ax, ROI_Shape)
+function ROI = DrawROI(ax, ROI_Shape, parentClass)
     % <Documentation>
         % DrawROI()
         %   Draw a user-defined region of interest (ROI) on an axes of a graphical object.
@@ -29,7 +29,9 @@ function ROI = DrawROI(ax, ROI_Shape)
 
     arguments
         ax (1,1) matlab.graphics.axis.Axes
-        ROI_Shape char {mustBeMember(ROI_Shape, {'Rectangle', 'Circle', 'Line', 'Spline', 'Polygon', 'Freehand'})} = 'Rectangle'
+        ROI_Shape char
+        parentClass
+        % ROI_Shape char {mustBeMember(ROI_Shape, {'Rectangle', 'Circle', 'Line', 'Spline', 'Polygon', 'Freehand'})} = 'Rectangle'
     end
 
     switch ROI_Shape
@@ -38,9 +40,14 @@ function ROI = DrawROI(ax, ROI_Shape)
         case 'Circle'
             ROI = drawcircle(ax);
         case 'Line'
-            ROI = drawline(ax);
+            ROI = drawline(ax, ...
+                           "LineWidth", parentClass.DefaultLineWidth ...
+                          );
         case 'Spline'
-            ROI = drawfreehand(ax, "Closed", false, "FaceAlpha", 0);
+            ROI = drawfreehand(ax, ...
+                               "Closed", false, ...
+                               "FaceAlpha", 0 ...
+                              );
         case 'Polygon'
             ROI = drawpolygon(ax);
         case 'Freehand'
@@ -49,6 +56,10 @@ function ROI = DrawROI(ax, ROI_Shape)
             error('ROI shape not available')
     end
 
-    AdjustROIThickness(ROI, ax);
+    if isprop(ROI, "LineWidth")
+        ROI.LineWidth = parentClass.DefaultLineWidth;
+    end
+
+    AdjustROIThickness(ROI, ax, parentClass);
     wait(ROI);
 end
