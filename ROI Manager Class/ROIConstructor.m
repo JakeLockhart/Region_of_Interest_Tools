@@ -13,7 +13,7 @@ classdef ROIConstructor < handle
 
     methods(Access = public)
         function draw(obj, ax, shape)
-            ROIObject = DrawROI(ax, shape);
+            ROIObject = DrawROI(ax, shape, obj.parentClass);
             AdjustROIThickness(ROIObject, ax);
 
             axesList = obj.windowClass.axesHandles;
