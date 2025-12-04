@@ -46,4 +46,10 @@ classdef ROIManager < handle
             end
         end
     end
+
+    methods (Access = public)
+        function Recall(obj)
+            RecallUserROIs(obj);
+        end
+    end
 end
