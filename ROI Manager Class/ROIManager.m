@@ -5,11 +5,8 @@ classdef ROIManager < handle
         Properties
     end
 
-    properties (Hidden)
+    properties (Constant, Hidden)
         DefaultLineWidth = 2;
-    end
-
-    properties (Constant)
         ROI_Shape_List = {'Line', ...
                           'Rectangle', ...
                           'Circle', ...
@@ -20,12 +17,21 @@ classdef ROIManager < handle
     end
 
     methods
-        function obj = ROIManager(ImageStack)
+        function obj = ROIManager(ImageStack, WindowType)
+            arguments
+                ImageStack (1,:) cell
+                WindowType (1,1) string {mustBeMember(WindowType, ["TiledImageProjections"])} = "TiledImageProjections"
+            end
+
             obj.ImageStack = ImageStack;
             obj.ROIMask = cell(1, numel(ImageStack));
             obj.Properties = cell(1, numel(ImageStack));
 
-            Window = WindowConstructor(obj);
+            switch WindowType
+                case "TiledImageProjections"
+                    Window = TiledImageProjections(obj);
+            end
+
             Drawer = ROIConstructor(obj, Window);
             Window.drawer = Drawer;
 
