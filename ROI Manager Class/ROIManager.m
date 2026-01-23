@@ -5,8 +5,11 @@ classdef ROIManager < handle
         Properties
     end
 
-    properties (Constant, Hidden)
+    properties (Hidden)
         DefaultLineWidth = 2;
+    end
+
+    properties (Constant, Hidden)
         ROI_Shape_List = {'Line', ...
                           'Rectangle', ...
                           'Circle', ...
