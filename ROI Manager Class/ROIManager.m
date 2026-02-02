@@ -39,26 +39,20 @@ classdef ROIManager < handle
             Window.drawer = Drawer;
 
             uiwait(Window.window);
+            obj = CommitAndClose(obj, Window);
 
-            for Stack = 1:numel(obj.ImageStack)
-                if ~isempty(obj.ROIMask{Stack})
-                    obj.ROIMask{Stack} = fliplr(obj.ROIMask{Stack});
-                    obj.Properties{Stack} = ROIProperties(Window.ROIObjects{Stack});
-                    if isprop(obj.Properties{Stack}, 'Line')
-                        obj.Properties{Stack}.LineCenterGaps();
-                    end
-                end
-            end
-
-            if isvalid(Window.window)
-                close(Window.window);
-            end
         end
     end
 
     methods (Access = public)
         function Recall(obj)
             RecallUserROIs(obj);
+        end
+    end
+
+    methods (Access = private)
+        function obj = CommitAndClose(obj, Window)
+            obj = CommitROIsToManager(obj, Window);
         end
     end
 end
