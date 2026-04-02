@@ -24,14 +24,11 @@ classdef ROIConstructor < handle
                 return;
             end
 
-            % ROIIndex = numel(obj.parentClass.ROIMask{ImageIndex}) + 1;
             ROIIndex = obj.getNextROIIndex(ImageIndex, shape);
             ROIObject.UserData.ID = ROIIdentifier.MakeID(ImageIndex, shape(1), ROIIndex);
 
             obj.windowClass.ROIObjects{ImageIndex}{ROIIndex} = ROIObject;
             obj.parentClass.ROIMask{ImageIndex}{ROIIndex} = createMask(ROIObject);
-% obj.windowClass.ROIObjects{ImageIndex}{end+1} = ROIObject;
-% obj.parentClass.ROIMask{ImageIndex}{end+1} = createMask(ROIObject);
         end
     end
 
