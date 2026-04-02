@@ -39,7 +39,9 @@ classdef ROIManager < handle
             Window.drawer = Drawer;
 
             uiwait(Window.window);
-            obj = CommitAndClose(obj, Window);
+            pushROIManager = CommitAndClose(obj, Window);
+            pushROIManager.commitROIs;
+            pushROIManager.closeManager;
 
         end
     end
@@ -47,12 +49,6 @@ classdef ROIManager < handle
     methods (Access = public)
         function Recall(obj)
             RecallUserROIs(obj);
-        end
-    end
-
-    methods (Access = private)
-        function obj = CommitAndClose(obj, Window)
-            obj = CommitROIsToManager(obj, Window);
         end
     end
 end
