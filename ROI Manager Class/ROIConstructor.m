@@ -24,7 +24,7 @@ classdef ROIConstructor < handle
                 return;
             end
 
-            ROIIndex = obj.getNextROIIndex(ImageIndex, shape);
+            ROIIndex = obj.getGlobalROIIndex(ImageIndex);
             ROIObject.UserData.ID = ROIIdentifier.MakeID(ImageIndex, shape(1), ROIIndex);
 
             obj.windowClass.ROIObjects{ImageIndex}{ROIIndex} = ROIObject;
@@ -33,28 +33,12 @@ classdef ROIConstructor < handle
     end
 
     methods(Access = private)
-        function ROIIndex = getNextROIIndex(obj, ImageIndex, shape)
-            ROIList = obj.windowClass.ROIObjects{ImageIndex};
-            shapeInitial = shape(1);
-
-            if isempty(ROIList)
-                ROIIndex = 1;
-                return
+        function index = getGlobalROIIndex(obj, imageIndex)
+            if isempty(obj.windowClass.ROIObjects{imageIndex})
+                obj.windowClass.ROIObjects{imageIndex} = {};
             end
 
-            index = 0;
-            for k = 1:numel(ROIList)
-                ROI = ROIList{k};
-                if isempty(ROI) || ~isfield(ROI.UserData, 'ID')
-                    continue
-                end
-
-                ID = ROI.UserData.ID;
-                if contains(ID, "_"+shapeInitial+"_")
-                    index = index + 1;
-                end
-            end
-            ROIIndex = index + 1;
+            index = numel(obj.windowClass.ROIObjects{imageIndex}) + 1;
         end
     end
 
