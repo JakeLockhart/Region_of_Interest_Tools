@@ -44,6 +44,7 @@ classdef ROIProperties < dynamicprops & handle
                     Info = "Properties not defined in class";
             end
 
+            Info.ID = ROIobj.UserData.ID;
             obj.(ROIType){end + 1} = Info;
         end
     end
