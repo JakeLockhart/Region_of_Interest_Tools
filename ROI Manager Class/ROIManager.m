@@ -47,8 +47,12 @@ classdef ROIManager < handle
     end
 
     methods (Access = public)
-        function Recall(obj)
+        function recall(obj)
             RecallUserROIs(obj);
+        end
+
+        function delete(obj, ID)
+            DeleteROI(obj).delete(ID);
         end
     end
 end
