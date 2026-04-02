@@ -37,7 +37,7 @@ classdef ROIIdentifier < ROIManager
                 NewIndex (1,1) double {mustBeNumeric, mustBeInteger, mustBePositive, mustBeNonzero}
             end
 
-            [stack, type, ~] = ROIIdentifier.decodeIdentifier(ID)
+            [stack, type, ~] = ROIIdentifier.decodeIdentifier(ID);
             ID = ROIIdentifier.MakeID(stack, type(1), NewIndex);
         end
     end
