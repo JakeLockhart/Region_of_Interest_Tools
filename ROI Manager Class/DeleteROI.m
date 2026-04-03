@@ -11,18 +11,58 @@ classdef DeleteROI
 
     methods(Access = public)
         function delete(obj, ID)
-            [ImageIndex, ROIType, ROIIndex] = ROIIdentifier.ReadID(ID);
-            obj.removeMask(ImageIndex, ROIIndex);
-            obj.removeProperty(ImageIndex, ROIType, ROIIndex);
-            obj.updateIdentifiers(ImageIndex);
+            arguments
+                obj
+                ID string {mustBeVector}
+            end
+            
+            obj.validateIDs(ID)
+            obj.deleteMultipleIDs(ID)
         end
     end
 
     methods(Access = private)
+        function validateIDs(obj, IDs)
+            totalStacks = numel(obj.ROIManagerObj.Properties);
+            invalidIdentifier = "InvalidEntry:InvalidROIID";
+            ME = "";
+
+            for idIndex = 1:numel(IDs)
+                ID = IDs(idIndex);
+                [stack, type, index] = ROIIdentifier.ReadID(ID);
+                if isempty(stack) || isempty(type) || isempty(index)
+                    ME = sprintf('One or more of the identifier elements is missing.');
+                    break
+                end
+
+                if stack ~= floor(stack) || stack < 1 || stack > totalStacks
+                    ME = sprintf('Stack index (%d) is invalid', stack);
+                    break
+                end
+
+                roiProperties = obj.ROIManagerObj.Properties{stack};
+                if ~isprop(roiProperties, type)
+                    ME = sprintf('ROI property (%s) is invalid', type);
+                    break
+                end
+
+                totalROIs = numel(roiProperties.(type));
+                if index ~= floor(index) || index < 1 || index > totalROIs
+                    ME = sprintf('ROI index (%d) is invalid', index);
+                    break
+                end
+            end
+
+            if ME ~= ""
+                errorMessage = MException(invalidIdentifier, ME);
+                throwAsCaller(errorMessage)
+            end
+        end
+
         function removeMask(obj, ImageIndex, ROIIndex)
             obj.ROIManagerObj.ROIMask{ImageIndex}(ROIIndex) = [];
             if isempty(obj.ROIManagerObj.ROIMask{ImageIndex})
-                obj.ROIManagerObj.ROIMask(ImageIndex) = [];
+                obj.ROIManagerObj.ROIMask{ImageIndex} = [];
             end
         end
 
@@ -49,7 +89,47 @@ classdef DeleteROI
             end
             obj.ROIManagerObj.Properties{ImageIndex} = roiProperty;
         end
-    end
 
+        function removeEmptyPropertyFields(obj, ImageStack)
+            roiProperties = obj.ROIManagerObj.Properties{ImageStack};
+            roiTypes = properties(roiProperties);
+            for field = 1:numel(roiTypes)
+                roiType = roiTypes{field};
+                if isempty(roiProperties.(roiType))
+                    emptyField = findprop(roiProperties, roiType);
+                    delete(emptyField)
+                end
+            end
+        end
+
+        function deleteMultipleIDs(obj, IDs)
+            [StackIndex, ROIType, ROIIndex] = ROIIdentifier.ReadIDs(IDs);
+            info = table(StackIndex(:), ROIType(:), ROIIndex(:), ...
+                            'VariableNames', {'StackIndex', 'ROIType', 'ROIIndex'});
+            [groups, keys] = findgroups(info(:, {'StackIndex', 'ROIType'}));
+
+            for group = 1:max(groups)
+                rows = (groups == group);
+
+                stack = keys.StackIndex(group);
+                type = keys.ROIType(group);
+                indices = info.ROIIndex(rows);
+
+                indices = sort(indices, 'descend');
+
+                for roi = 1:numel(indices)
+                    index = indices(roi);
+
+                    obj.removeMask(stack, index);
+                    obj.removeProperty(stack, type, index);
+                end
+            end
+
+            for stack = unique(info.StackIndex).'
+                obj.removeEmptyPropertyFields(stack);
+                obj.updateIdentifiers(stack);
+            end
+        end
+    end
 end
 
