@@ -31,6 +31,22 @@ classdef ROIIdentifier < ROIManager
             [StackIndex, ROIType, ROIIndex] = ROIIdentifier.decodeIdentifier(ID);
         end
 
+        function [StackIndex, ROIType, ROIIndex] = ReadIDs(IDs)
+            arguments
+                IDs string {mustBeVector}
+            end
+
+            totalIDs = numel(IDs);
+            StackIndex = zeros(totalIDs, 1);
+            ROIType = strings(totalIDs, 1);
+            ROIIndex = zeros(totalIDs, 1);
+
+            for entry = 1:totalIDs
+                [StackIndex(entry), ROIType(entry), ROIIndex(entry)] = ROIIdentifier.ReadID(IDs(entry));
+            end
+
+        end
+
         function ID = UpdateID_Index(ID, NewIndex)
             arguments
                 ID (1,1) string
