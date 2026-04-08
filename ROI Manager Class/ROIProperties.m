@@ -30,7 +30,7 @@ classdef ROIProperties < dynamicprops & handle
                     Info.Position = ROIobj.Position;
                     Info.LineWidth = ROIobj.LineWidth;
                     Info.CenterPoints = mean(ROIobj.Position);
-                    Info.ROIGeometry = LineGeometry(Info.Position, Info.LineWidth);
+                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
 
                 case 'Spline'
                     Info.Position = ROIobj.Position;
