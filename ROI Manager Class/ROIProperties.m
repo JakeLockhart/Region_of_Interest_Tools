@@ -10,9 +10,7 @@ classdef ROIProperties < dynamicprops & handle
 
     methods (Access = private)
         function SaveProperties(obj, ROIobj)
-            ObjectType = class(ROIobj);
-            TypeParts = split(ObjectType, '.');
-            ROIType = TypeParts{end};
+            [~, ROIType, ~] = ROIIdentifier.ReadID(ROIobj.UserData.ID);
 
             if ~isprop(obj, ROIType)
                 addprop(obj, ROIType);
@@ -35,11 +33,16 @@ classdef ROIProperties < dynamicprops & handle
                     Info.ROIGeometry = LineGeometry(Info.Position, Info.LineWidth);
 
                 case 'Spline'
+                    Info.Position = ROIobj.Position;
+                    Info.LineWidth = ROIobj.LineWidth;
+
                 case 'Polygon'
                     Info.Position = ROIobj.Position;
+
                 case 'Freehand'
                     Info.Position = ROIobj.Position;
                     Info.Waypoints = ROIobj.Waypoints;
+                    
                 otherwise
                     Info = "Properties not defined in class";
             end
