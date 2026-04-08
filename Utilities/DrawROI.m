@@ -29,7 +29,7 @@ function ROI = DrawROI(ax, ROI_Shape, parentClass)
 
     arguments
         ax (1,1) matlab.graphics.axis.Axes
-        ROI_Shape char
+        ROI_Shape (1,1) string {mustBeMember(ROI_Shape, ["Rectangle", "Circle", "Line", "Spline", "Polygon", "Freehand"])}
         parentClass
     end
 
