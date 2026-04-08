@@ -35,6 +35,7 @@ classdef ROIProperties < dynamicprops & handle
                 case 'Spline'
                     Info.Position = ROIobj.Position;
                     Info.LineWidth = ROIobj.LineWidth;
+                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
 
                 case 'Polygon'
                     Info.Position = ROIobj.Position;
