@@ -30,13 +30,13 @@ classdef ROIProperties < dynamicprops & handle
                     Info.Position = ROIobj.Position;
                     Info.LineWidth = ROIobj.LineWidth;
                     Info.CenterPoints = mean(ROIobj.Position);
-                    Info.PathLength = calculatePathLength(ROIobj.Position);
+                    Info.PathLength = ROIProperties.calculatePathLength(ROIobj.Position);
                     Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
 
                 case 'Spline'
                     Info.Position = ROIobj.Position;
                     Info.LineWidth = ROIobj.LineWidth;
-                    Info.PathLength = calculatePathLength(ROIobj.Position);
+                    Info.PathLength = ROIProperties.calculatePathLength(ROIobj.Position);
                     Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
 
                 case 'Polygon'
@@ -55,9 +55,9 @@ classdef ROIProperties < dynamicprops & handle
         end
     end
 
-    methods (Access = private)
-        function length = calculatePathLength(obj)
-            length = sum(sqrt(sum(diff(obj.Position).^2, 2)));
+    methods (Static, Access = private)
+        function pathLength = calculatePathLength(position)
+            pathLength = sum(sqrt(sum(diff(position).^2, 2)));
         end
     end
 
