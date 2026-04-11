@@ -1,11 +1,11 @@
-function ROIGeometry = ProfileGeometry(Position, Width, SamplesOnROI)
+function ROIGeometry = ProfileGeometry(Position, Width, PathLength, SamplesPerWidth, SamplesPerLength)
     % <Documentation>
         % ProfileGeometry()
         %   
         %   Created by: jsl5865
         %   
         % Syntax:
-        %   ROIGeometry = ProfileGeometry(Position, Width, SamplesOnROI)
+        %   ROIGeometry = ProfileGeometry(Position, Width, PathLength, SamplesPerWidth, SamplesPerLength)
         %   
         % Description:
         %   Generates a sampling region of interest profile based on the positions along a 'path' 
@@ -19,13 +19,14 @@ function ROIGeometry = ProfileGeometry(Position, Width, SamplesOnROI)
         %       - The perpendicular directions are calculated based on the position's gradient 
         %         (2nd derivative), allowing functionality for linear and non-linear paths
         %       - Normal vectors are symmetric about the path's centerline
+        %       - Sampling is done based on the 
         %   
         % Input:
-        %   Position        - An nx2 array of positions (x,y) representing a 1D path. 
-        %   Width           - Scalar representing the full width of the drawn path.
-        %   SamplesOnROIs   - The number of sample points along the path. Oversampling produces 
-        %                       smoother/finer intensity profiles, while undersampling produces 
-        %                       non-representative intensity profiles
+        %   Position            - An nx2 array of positions (x,y) representing a 1D path. 
+        %   Width               - Scalar representing the full width of the drawn path [pixels].
+        %   PathLength          - Scalar representing the full arc length of the drawn path [pixels]
+        %   SamplesPerWidth     - Cross-sectional sampling resolution
+        %   SamplesPerLength    - Longitudinal sampling resolution
         %
         % Output:
         %   ROIGeometry - A structure containing the offsets from the path
@@ -35,13 +36,16 @@ function ROIGeometry = ProfileGeometry(Position, Width, SamplesOnROI)
     arguments
         Position (:,2) double 
         Width (1,1) double {mustBeNumeric, mustBePositive}
-        SamplesOnROI (1,1) double {mustBeNumeric, mustBePositive} = 1000
+        PathLength (1,1) double {mustBeNumeric, mustBePositive}
+        SamplesPerWidth (1,1) double {mustBeNumeric, mustBeGreaterThanOrEqual(SamplesPerWidth, 1)} = 1.5
+        SamplesPerLength  (1,1) double {mustBeNumeric, mustBeGreaterThanOrEqual(SamplesPerLength, 1)} = 1
     end
 
     x = Position(:,1);
     y = Position(:,2);
 
-    [X, Y, ~] = improfile([], x, y, SamplesOnROI);
+    SamplesOnLongitudinalAxis = max(1, round(PathLength * SamplesPerLength));
+    [X, Y, ~] = improfile([], x, y, SamplesOnLongitudinalAxis);
 
     dx = gradient(X);
     dy = gradient(Y);
@@ -51,7 +55,8 @@ function ROIGeometry = ProfileGeometry(Position, Width, SamplesOnROI)
     UnitX = -dy;
     UnitY = dx;
 
-    Offsets = -Width/2:Width/2;
+    SamplesOnCrossSectionalAxis = max(1, Width * SamplesPerWidth);
+    Offsets = linspace(-Width/2, Width/2, SamplesOnCrossSectionalAxis);
     TotalWidthOffsets = numel(Offsets);
     
     OffsetX = X * ones(1,TotalWidthOffsets) + UnitX * Offsets;

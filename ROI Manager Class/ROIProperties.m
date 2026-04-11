@@ -31,13 +31,13 @@ classdef ROIProperties < dynamicprops & handle
                     Info.LineWidth = ROIobj.LineWidth;
                     Info.CenterPoints = mean(ROIobj.Position);
                     Info.PathLength = ROIProperties.calculatePathLength(ROIobj.Position);
-                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
+                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth, Info.PathLength);
 
                 case 'Spline'
                     Info.Position = ROIobj.Position;
                     Info.LineWidth = ROIobj.LineWidth;
                     Info.PathLength = ROIProperties.calculatePathLength(ROIobj.Position);
-                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth);
+                    Info.ROIGeometry = ProfileGeometry(Info.Position, Info.LineWidth, Info.PathLength);
 
                 case 'Polygon'
                     Info.Position = ROIobj.Position;
