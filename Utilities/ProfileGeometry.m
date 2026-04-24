@@ -29,7 +29,13 @@ function ROIGeometry = ProfileGeometry(Position, Width, PathLength, SamplesPerWi
         %   SamplesPerLength    - Longitudinal sampling resolution
         %
         % Output:
-        %   ROIGeometry - A structure containing the offsets from the path
+        %   ROIGeometry - A structure containing the offsets from the path. Note that both fields 
+        %                   (OffsetX and OffsetY) are nxm matrices where n represents the samples 
+        %                   on the longitudinal axis and m represents the samples on the cross-sectional 
+        %                   axis. So a single sample point is defined as [OffsetX(a,b), OffsetY(a,b)]. 
+        %                   A set of samples points along the cross-sectional axis is defined as 
+        %                   [OffsetX(a,:), OffsetY(a,:)] while a set of points along the longitudinal 
+        %                   axis is defined as [OffsetX(:,a), OffsetY(:,a)].
         %   
     % <End Documentation>
 
