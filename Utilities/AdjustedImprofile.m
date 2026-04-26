@@ -1,4 +1,4 @@
-function ROIProfile = AdjustedImprofile(Image, ROIGeometry)
+function ROIProfile = AdjustedImprofile(image, roiGeometry, varargin)
     % <Documentation>
         % AdjustedImprofile()
         %   Samples the pixel intensity values along a user-defined line with adjustable thickness.
@@ -28,10 +28,48 @@ function ROIProfile = AdjustedImprofile(Image, ROIGeometry)
         %   
     % <End Documentation>
 
-    OffsetX = ROIGeometry.OffsetX;
-    OffsetY = ROIGeometry.OffsetY;
+    parameters = parseInputs(image, roiGeometry, varargin{:});
+    offsetX = roiGeometry.OffsetX;
+    offsetY = roiGeometry.OffsetY;
 
-    Values = interp2(double(Image), OffsetX, OffsetY, "linear", 0);
-    ROIProfile = mean(Values, 2, 'omitnan');
+    samples = interp2(double(image), offsetX, offsetY, "linear", NaN);
+    switch parameters.ProfileAxis
+        case "AlongPath"
+            ROIProfile = mean(samples, 1, 'omitnan');
+        case "AcrossPath"
+            ROIProfile = mean(samples, 2, 'omitnan');
+        case "None"
+            ROIProfile = samples;
+    end
+
+    % ROIProfile = mean(Values, 2, 'omitnan');
+
+
+    function parameters = parseInputs(image, roiGeometry, varargin)
+        % Validate required inputs (image, roiGeometry)
+            if ~isnumeric(image) || isvector(image) || ndims(image) > 3
+                me = MException('InvalidEntry:image', 'Image is not numeric or the proper dimensions');
+                throwAsCaller(me)
+            end
+
+            if ~isstruct(roiGeometry) || ~isfield(roiGeometry, "OffsetX") || ~isfield(roiGeometry, "OffsetY")
+                me = MException('InvalidEntry:roiGeometry', 'roiGeometry is invalid. Ensure roiGeometry comes from ProfileGeometry.m');
+                throwAsCaller(me)
+            end
+
+        % Name-value pairs
+            p = inputParser;
+
+            addParameter(p, 'ProfileAxis', "AlongPath", @(value) isscalar(value) && ismember(value, ["AlongPath", "AcrossPath", "None"]));
+            addParameter(p, 'BinSamples', 1, @(value) isscalar(value) && isnumeric(value))
+            addParameter(p, 'PixelResolution', 1, @(value) isscalar(value) && isnumeric(value))
+
+        % Parse through parameters
+            parse(p, varargin{:});
+            parameters = p.Results;
+
+        % Validate optional inputs
+
+    end
 
 end
